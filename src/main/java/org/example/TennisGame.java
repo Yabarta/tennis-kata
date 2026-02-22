@@ -7,14 +7,18 @@ public class TennisGame {
     public String scoreTranslator(int scoreP1, int scoreP2) {
         String[] scoreNames = {"Love", "Fifteen", "Thirty", "Forty", "", "All"};
 
-        if (scoreP1 < 4 && scoreP2 < 4 && (scoreP1 != 3 && scoreP2 != 3)) {
+        Boolean validScoreP1 = scoreP1 >= 0 && scoreP1 < 4;
+        Boolean validScoreP2 = scoreP2 >= 0 && scoreP2 < 4;
+        Boolean notBothForty = !(scoreP1 == 3 && scoreP2 == 3);
+
+        if (validScoreP1 && validScoreP2 && notBothForty) {
             if(scoreP1 == scoreP2 && scoreP1 != 0){
                 scoreP2 = 5;
             }
             return scoreNames[scoreP1] + "-" + scoreNames[scoreP2];
         }
 
-        return "Puntuación fuera del rango básico";
+        throw new IllegalArgumentException("La puntuación está fuera de rango");
     }
 
     public String winningWithoutAdvantage(int scoreP1, int scoreP2) {
@@ -23,31 +27,10 @@ public class TennisGame {
         } else if (scoreP2 == 4) {
             return "Player 2 wins";
         }
-        return "Puntuación fuera del rango de victoria";
+        throw new IllegalArgumentException("La puntuación está fuera de rango");
     }
 
     public String tiebreaker(int scoreP1, int scoreP2) {
-        String result = "Puntuación fuera del rango de empate";
-        Map<String, String> rules = new HashMap<>();
-        rules.put("3-3","Deuce");
-        rules.put("4-3","Advantage Player 1");
-        rules.put("3-4","Advantage Player 2");
-        rules.put("5-3","Player 1 wins");
-        rules.put("3-5","Player 2 wins");
-
-        String keySearch = scoreP1 + "-" + scoreP2;
-
-        for (String clave:  rules.keySet()) {
-            if (clave.equals(keySearch)) {
-                result = rules.get(clave);
-            }
-        }
-
-        return result;
-    }
-
-    public String tiebreaker2(int scoreP1, int scoreP2) {
-        String result = "Puntuación fuera del rango de empate";
         Map<Integer, String> rules = new HashMap<>();
         rules.put(0,"Deuce");
         rules.put(1,"Advantage Player 1");
@@ -57,12 +40,10 @@ public class TennisGame {
 
         Integer diff = scoreP1 - scoreP2;
 
-        for (Integer clave:  rules.keySet()) {
-            if (clave.equals(diff)) {
-                result = rules.get(clave);
-            }
+        if (rules.containsKey(diff)) {
+            return rules.get(diff);
         }
 
-        return result;
+        throw new IllegalArgumentException("La puntuación está fuera de rango");
     }
 }
