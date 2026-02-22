@@ -8,6 +8,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class WinningTest {
     static Stream<Arguments> winningProvider() {
@@ -26,5 +27,23 @@ public class WinningTest {
 
         assertEquals(expected, result);
 
+    }
+
+    static Stream<Arguments> invalidProvider() {
+        return Stream.of(
+                Arguments.of(0, 3),
+                Arguments.of(3, 0),
+                Arguments.of(2, 5),
+                Arguments.of(2, 3),
+                Arguments.of(8, 1)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("invalidProvider")
+    void should_throw_IllegalArgumentException_for_invalid_scores(int scoreP1, int scoreP2) {
+        TennisGame game = new TennisGame();
+
+        assertThrows(IllegalArgumentException.class, () -> game.winningWithoutAdvantage(scoreP1, scoreP2));
     }
 }
